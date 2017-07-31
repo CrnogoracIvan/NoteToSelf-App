@@ -50,23 +50,24 @@ public class DialogNewNote extends DialogFragment {
                 //Create new note
                 Note newNote = new Note();
 
-                //Sets it varible to match users entries on the form
+                //Sets it variable to match users entries on the form
                 newNote.setTitle(editTitle.getText().toString());
                 newNote.setDescription(editDescription.getText().toString());
                 newNote.setIdea(checkBoxIdea.isChecked());
                 newNote.setTodo(checkBoxToDo.isChecked());
                 newNote.setImportant(checkBoxImportant.isChecked());
+
+                //Get reference to MainActivity
+                MainActivity callingActivity = (MainActivity) getActivity();
+
+                //Pass newNote back to MainActivity
+                callingActivity.createNewNote(newNote);
+
+                //Quit the dialog
+                dismiss();
             }
         });
 
-        //Get reference to MainActivity
-        MainActivity callingActivity = (MainActivity) getActivity();
-
-        //Pass newNote back to MainActivity
-        callingActivity.createNewNote(newNote);
-
-        //Quit the dialog
-        dismiss();
-
+    return builder.create();
     }
 }
