@@ -1,21 +1,29 @@
 package com.example.ivancrnogorac.app_notetoself;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    //Temp code
-    Note mTempNote = new Note();
+    private NoteAdapter mNoteAdapter;
 
     public void createNewNote (Note n){
-        //Temp code
-        mTempNote = n;
+        mNoteAdapter.addNote(n);
     }
 
     @Override
@@ -23,17 +31,22 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Temp code
-        Button button = (Button) findViewById(R.id.button);
-        button.setOnClickListener(new View.OnClickListener() {
+        mNoteAdapter = new NoteAdapter();
+        ListView listNote = (ListView) findViewById(R.id.listView);
+        listNote.setAdapter(mNoteAdapter);
+
+        //Handle clicks on the ListView
+        listNote.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
-            public void onClick(View v) {
-                // Create new DialogShowNote called dialog
+            public void onItemClick(AdapterView<?> adapter, View view, int whichItem, long id) {
+                //Create temp note which is a reference to the Note that just been clicked
+                Note tempNote = mNoteAdapter.getItem(whichItem);
+                //Create mew dialog window
                 DialogShowNote dialog = new DialogShowNote();
-                //Send the note via sendNoteSelected
-                dialog.sendNoteSelected(mTempNote);
-                //create the dialog
-                dialog.show(getSupportFragmentManager(),"123");
+                // Send in a reference to the note to be shown
+                dialog.sendNoteSelected(tempNote);
+                //Show dialog
+                dialog.show(getSupportFragmentManager(),"");
             }
         });
     }
@@ -55,5 +68,68 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+    //----------------------------------------------NOTE ADAPTER -------------------------------------------
+    public class NoteAdapter extends BaseAdapter{
+        List<Note> noteList = new ArrayList<Note>();
+
+        @Override
+        public int getCount() {
+            return noteList.size();
+        }
+
+        @Override
+        public Note getItem(int whichItem) {
+            return noteList.get(whichItem);
+        }
+
+        @Override
+        public long getItemId(int whichItem) {
+            return whichItem;
+        }
+
+        @Override
+        public View getView(int whichItem, View view, ViewGroup viewGroup) {
+
+            //Has view been inflated already
+            if (view == null) {
+                //if not, do so here
+                //First create a LayoutInflater
+                LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+                //now instantiate view using Inflater.inflate using the list item layout
+                view = inflater.inflate(R.layout.listitem, viewGroup,false);
+
+                //grab references to all views
+                TextView txtTitle = (TextView) view.findViewById(R.id.txtTitle);
+                TextView txtDescription = (TextView) view.findViewById(R.id.txtDescritpion);
+                ImageView ivImportant = (ImageView) view.findViewById(R.id.imageViewImportant);
+                ImageView ivToDo = (ImageView) view.findViewById(R.id.imageViewToDo);
+                ImageView ivIdea = (ImageView) view.findViewById(R.id.imageViewIdea);
+
+                //Hide any imageView that are not relevant;
+                Note tempNote = noteList.get(whichItem);
+                if (!tempNote.isImportant()) {
+                    ivImportant.setVisibility(View.GONE);
+                }
+                if (!tempNote.isTodo()){
+                    ivToDo.setVisibility(View.GONE);
+                }
+                if (!tempNote.isIdea()) {
+                    ivIdea.setVisibility(View.GONE);
+                }
+                //set title and desc.
+                txtTitle.setText(tempNote.getTitle());
+                txtDescription.setText(tempNote.getDescription());
+            }
+
+            return view;
+        }
+        public void addNote (Note n){
+            noteList.add(n);
+            notifyDataSetChanged();
+        }
     }
 }

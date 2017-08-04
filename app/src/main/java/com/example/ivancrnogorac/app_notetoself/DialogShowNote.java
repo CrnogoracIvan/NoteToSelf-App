@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 public class DialogShowNote extends DialogFragment {
 
-    private Note  mNote;
+    private Note mNote;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
