@@ -6,7 +6,7 @@ package com.example.ivancrnogorac.app_notetoself;
 
 public class Note {
 
-    //All strings have m as prefix because of android convention. Also, all of theese vars are private. With geters and seters we can use and change them.
+    //All strings have m as prefix because of android convention. Also, all of these vars are private. With getters and setters we can use and change them.
     private String mTitle;
     private String mDescription;
     private boolean mIdea;

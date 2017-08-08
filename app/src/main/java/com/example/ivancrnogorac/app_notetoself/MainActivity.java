@@ -1,6 +1,8 @@
 package com.example.ivancrnogorac.app_notetoself;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -21,6 +23,9 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private NoteAdapter mNoteAdapter;
+    private boolean mSound;
+    private int mAnimOption;
+    private SharedPreferences mPrefs;
 
     public void createNewNote (Note n){
         mNoteAdapter.addNote(n);
@@ -66,10 +71,22 @@ public class MainActivity extends AppCompatActivity {
             DialogNewNote dialog = new DialogNewNote();
             dialog.show(getSupportFragmentManager(),"");
         }
+        if(id == R.id.action_settings){
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+        }
 
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        mPrefs = getSharedPreferences("Note to self", MODE_PRIVATE);
+        mSound = mPrefs.getBoolean("sound", true);
+        mAnimOption = mPrefs.getInt("anim option", SettingsActivity.FAST);
+    }
 
     //----------------------------------------------NOTE ADAPTER -------------------------------------------
     public class NoteAdapter extends BaseAdapter{
@@ -98,7 +115,6 @@ public class MainActivity extends AppCompatActivity {
                 //if not, do so here
                 //First create a LayoutInflater
                 LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
                 //now instantiate view using Inflater.inflate using the list item layout
                 view = inflater.inflate(R.layout.listitem, viewGroup,false);
 
