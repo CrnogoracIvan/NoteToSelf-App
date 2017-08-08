@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -90,7 +91,26 @@ public class MainActivity extends AppCompatActivity {
 
     //----------------------------------------------NOTE ADAPTER -------------------------------------------
     public class NoteAdapter extends BaseAdapter{
+        private JSONSerializer mSerializer;
         List<Note> noteList = new ArrayList<Note>();
+
+        public NoteAdapter(){
+            mSerializer = new JSONSerializer("NoteToSelf.json", MainActivity.this.getApplicationContext());
+            try {
+                noteList = mSerializer.load();
+            }catch (Exception e){
+                noteList = new ArrayList<Note>();
+                Log.e("Error loading notes", "",e);
+            }
+        }
+
+        public void saveNotes(){
+            try {
+                mSerializer.save(noteList);
+            }catch (Exception e){
+                Log.e("Error Saving Notes", "", e);
+            }
+        }
 
         @Override
         public int getCount() {
@@ -147,5 +167,12 @@ public class MainActivity extends AppCompatActivity {
             noteList.add(n);
             notifyDataSetChanged();
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        mNoteAdapter.saveNotes();
     }
 }

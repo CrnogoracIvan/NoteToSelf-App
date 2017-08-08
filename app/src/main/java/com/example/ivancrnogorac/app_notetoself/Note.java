@@ -1,5 +1,16 @@
 package com.example.ivancrnogorac.app_notetoself;
 
+import android.content.Context;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
+import java.util.List;
+
 /**
  * Created by Ivan Crnogorac on 7/30/2017.
  */
@@ -12,6 +23,42 @@ public class Note {
     private boolean mIdea;
     private boolean mTodo;
     private boolean mImportant;
+
+    private static final String JSON_TITLE = "title";
+    private static final String JSON_DESCRIPTION = "description";
+    private static final String JSON_IDEA = "idea";
+    private static final String JSON_TODO = "todo";
+    private static final String JSON_IMPORTANT = "important";
+
+
+    //constructor
+    public Note(JSONObject jo) throws JSONException{
+        mTitle = jo.getString(JSON_TITLE);
+        mDescription = jo.getString(JSON_DESCRIPTION);
+        mIdea = jo.getBoolean(JSON_IDEA);
+        mTodo = jo.getBoolean(JSON_TODO);
+        mImportant = jo.getBoolean(JSON_IMPORTANT);
+    }
+
+    //empty constructor
+    public Note() {
+    }
+
+    public JSONObject convertToJSON() throws JSONException{
+        JSONObject jo = new JSONObject();
+
+        jo.put(JSON_TITLE, mTitle);
+        jo.put(JSON_DESCRIPTION, mDescription);
+        jo.put(JSON_IDEA, mIdea);
+        jo.put(JSON_TODO, mTodo);
+        jo.put(JSON_IMPORTANT, mImportant);
+
+        return jo;
+    }
+
+
+
+
 
     public String getTitle() {
         return mTitle;
